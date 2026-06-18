@@ -40,20 +40,20 @@ jobs:
 
     - name: Deploy to server
       env:
-            SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-            HOST: ${{ secrets.HOST }}
-            USERNAME: ${{ secrets.USERNAME }}
-            DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
       run: |
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H $HOST >> ~/.ssh/known_hosts 2>/dev/null
-        
-        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $USERNAME@$HOST "mkdir -p $DEPLOY_PATH"
-        
-        rsync -avz --delete --no-t --exclude 'tests' --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" . $USERNAME@$HOST:$DEPLOY_PATH
-        
-        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $USERNAME@$HOST "cd $DEPLOY_PATH && composer install --no-dev --optimize-autoloader"
-        
-        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $USERNAME@$HOST "sudo systemctl restart apache2"
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+            
+            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${USERNAME}@${HOST}" "mkdir -p ${DEPLOY_PATH}"
+            
+            rsync -avz --delete --no-t --exclude 'tests' --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" . "${USERNAME}@${HOST}:${DEPLOY_PATH}"
+            
+            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${USERNAME}@${HOST}" "cd ${DEPLOY_PATH} && composer install --no-dev --optimize-autoloader"
+            
+            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${USERNAME}@${HOST}" "sudo systemctl restart apache2"
