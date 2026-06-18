@@ -22,7 +22,7 @@ class IMC
     /**
      * Calcula el IMC
      *
-     * Fórmula:
+     * Fórmula: .
      * IMC = peso / (altura²)
      *
      * @return float
