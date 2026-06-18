@@ -50,7 +50,7 @@ jobs:
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
             
-            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${USERNAME}@${HOST}" "mkdir -p ${DEPLOY_PATH}"
+            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${USERNAME}@${HOST}" "mkdir -p ${DEPLOY_PATH} && chmod 755 ${DEPLOY_PATH}"
             
             rsync -avz --delete --no-t --exclude 'tests' --exclude '.git' -e "ssh -o StrictHostKeyChecking=no" . "${USERNAME}@${HOST}:${DEPLOY_PATH}"
             
